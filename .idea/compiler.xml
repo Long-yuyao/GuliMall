@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="guli-order" />
+        <module name="guli-storage" />
+        <module name="guli-coupon" />
+        <module name="guli-product" />
+        <module name="guli-member" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="8">
+      <module name="guli-coupon" target="8" />
+      <module name="guli-member" target="8" />
+      <module name="guli-order" target="8" />
+      <module name="guli-product" target="8" />
+      <module name="guli-storage" target="8" />
+      <module name="gulimall" target="8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="guli-coupon" options="-parameters" />
+      <module name="guli-member" options="-parameters" />
+      <module name="guli-order" options="-parameters" />
+      <module name="guli-product" options="-parameters" />
+      <module name="guli-storage" options="-parameters" />
+    </option>
+  </component>
+</project>
