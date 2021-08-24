@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gulicoupon.dao.SeckillSkuNoticeDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="gulicoupon.entity.SeckillSkuNoticeEntity" id="seckillSkuNoticeMap">
+        <result property="id" column="id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="skuId" column="sku_id"/>
+        <result property="sessionId" column="session_id"/>
+        <result property="subcribeTime" column="subcribe_time"/>
+        <result property="sendTime" column="send_time"/>
+        <result property="noticeType" column="notice_type"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="gulicoupon.entity.SeckillSkuNoticeEntity">
+		select * from sms_seckill_sku_notice where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="gulicoupon.entity.SeckillSkuNoticeEntity">
+		select * from sms_seckill_sku_notice
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sms_seckill_sku_notice 
+	</select>
+	 
+	<insert id="save" parameterType="gulicoupon.entity.SeckillSkuNoticeEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sms_seckill_sku_notice
+		(
+			`member_id`, 
+			`sku_id`, 
+			`session_id`, 
+			`subcribe_time`, 
+			`send_time`, 
+			`notice_type`
+		)
+		values
+		(
+			#{memberId}, 
+			#{skuId}, 
+			#{sessionId}, 
+			#{subcribeTime}, 
+			#{sendTime}, 
+			#{noticeType}
+		)
+	</insert>
+	 
+	<update id="coupdate" parameterType="gulicoupon.entity.SeckillSkuNoticeEntity">
+		update sms_seckill_sku_notice 
+		<set>
+			<if test="memberId != null">`member_id` = #{memberId}, </if>
+			<if test="skuId != null">`sku_id` = #{skuId}, </if>
+			<if test="sessionId != null">`session_id` = #{sessionId}, </if>
+			<if test="subcribeTime != null">`subcribe_time` = #{subcribeTime}, </if>
+			<if test="sendTime != null">`send_time` = #{sendTime}, </if>
+			<if test="noticeType != null">`notice_type` = #{noticeType}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="codelete">
+		delete from sms_seckill_sku_notice where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sms_seckill_sku_notice where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

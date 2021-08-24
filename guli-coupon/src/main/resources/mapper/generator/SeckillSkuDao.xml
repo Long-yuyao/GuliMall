@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gulicoupon.dao.SeckillSkuDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="gulicoupon.entity.SeckillSkuEntity" id="seckillSkuMap">
+        <result property="id" column="id"/>
+        <result property="promotionId" column="promotion_id"/>
+        <result property="promotionSessionId" column="promotion_session_id"/>
+        <result property="skuId" column="sku_id"/>
+        <result property="seckillPrice" column="seckill_price"/>
+        <result property="seckillCount" column="seckill_count"/>
+        <result property="seckillLimit" column="seckill_limit"/>
+        <result property="seckillSort" column="seckill_sort"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="gulicoupon.entity.SeckillSkuEntity">
+		select * from sms_seckill_sku where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="gulicoupon.entity.SeckillSkuEntity">
+		select * from sms_seckill_sku
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sms_seckill_sku 
+	</select>
+	 
+	<insert id="save" parameterType="gulicoupon.entity.SeckillSkuEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sms_seckill_sku
+		(
+			`promotion_id`, 
+			`promotion_session_id`, 
+			`sku_id`, 
+			`seckill_price`, 
+			`seckill_count`, 
+			`seckill_limit`, 
+			`seckill_sort`
+		)
+		values
+		(
+			#{promotionId}, 
+			#{promotionSessionId}, 
+			#{skuId}, 
+			#{seckillPrice}, 
+			#{seckillCount}, 
+			#{seckillLimit}, 
+			#{seckillSort}
+		)
+	</insert>
+	 
+	<update id="coupdate" parameterType="gulicoupon.entity.SeckillSkuEntity">
+		update sms_seckill_sku 
+		<set>
+			<if test="promotionId != null">`promotion_id` = #{promotionId}, </if>
+			<if test="promotionSessionId != null">`promotion_session_id` = #{promotionSessionId}, </if>
+			<if test="skuId != null">`sku_id` = #{skuId}, </if>
+			<if test="seckillPrice != null">`seckill_price` = #{seckillPrice}, </if>
+			<if test="seckillCount != null">`seckill_count` = #{seckillCount}, </if>
+			<if test="seckillLimit != null">`seckill_limit` = #{seckillLimit}, </if>
+			<if test="seckillSort != null">`seckill_sort` = #{seckillSort}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="codelete">
+		delete from sms_seckill_sku where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sms_seckill_sku where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

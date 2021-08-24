@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>订单</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="../../css/bootstrap.min.css">
+<link rel="stylesheet" href="../../css/font-awesome.min.css">
+<link rel="stylesheet" href="../../plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="../../plugins/ztree/css/metroStyle/metroStyle.css">
+<link rel="stylesheet" href="../../css/main.css">
+<script src="../../libs/jquery.min.js"></script>
+<script src="../../plugins/layer/layer.js"></script>
+<script src="../../libs/bootstrap.min.js"></script>
+<script src="../../libs/vue.min.js"></script>
+<script src="../../plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="../../plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="../../plugins/ztree/jquery.ztree.all.min.js"></script>
+<script src="../../js/common.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<a v-if="hasPermission('order:save')" class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			<a v-if="hasPermission('order:update')" class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			<a v-if="hasPermission('order:delete')" class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">member_id</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.userId" placeholder="member_id"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">订单号</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.orderSn" placeholder="订单号"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">使用的优惠券</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.couponId" placeholder="使用的优惠券"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.createTime" placeholder="创建时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">用户名</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.username" placeholder="用户名"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">订单总额</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.totalAmount" placeholder="订单总额"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">应付总额</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.payAmount" placeholder="应付总额"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">运费金额</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.freightAmount" placeholder="运费金额"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">促销优化金额（促销价、满减、阶梯价）</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.promotionAmount" placeholder="促销优化金额（促销价、满减、阶梯价）"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">积分抵扣金额</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.integrationAmount" placeholder="积分抵扣金额"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">优惠券抵扣金额</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.couponAmount" placeholder="优惠券抵扣金额"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">后台调整订单使用的折扣金额</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.discountAmount" placeholder="后台调整订单使用的折扣金额"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">支付方式【1->支付宝；2->微信；3->银联； 4->货到付款；】</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.payType" placeholder="支付方式【1->支付宝；2->微信；3->银联； 4->货到付款；】"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">订单来源[0->PC订单；1->app订单]</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.sourceType" placeholder="订单来源[0->PC订单；1->app订单]"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">订单状态【0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单】</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.status" placeholder="订单状态【0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单】"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">物流公司(配送方式)</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.deliveryCompany" placeholder="物流公司(配送方式)"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">物流单号</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.deliverySn" placeholder="物流单号"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">自动确认时间（天）</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.autoConfirmDay" placeholder="自动确认时间（天）"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">可以获得的积分</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.integration" placeholder="可以获得的积分"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">可以获得的成长值</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.growth" placeholder="可以获得的成长值"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">发票类型[0->不开发票；1->电子发票；2->纸质发票]</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.billType" placeholder="发票类型[0->不开发票；1->电子发票；2->纸质发票]"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">发票抬头</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.billHeader" placeholder="发票抬头"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">发票内容</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.billContent" placeholder="发票内容"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">收票人电话</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.billReceiverPhone" placeholder="收票人电话"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">收票人邮箱</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.billReceiverEmail" placeholder="收票人邮箱"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">收货人姓名</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.receiverName" placeholder="收货人姓名"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">收货人电话</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.receiverPhone" placeholder="收货人电话"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">收货人邮编</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.receiverPostCode" placeholder="收货人邮编"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">省份/直辖市</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.receiverProvince" placeholder="省份/直辖市"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">城市</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.receiverCity" placeholder="城市"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">区</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.receiverRegion" placeholder="区"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">详细地址</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.receiverAddress" placeholder="详细地址"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">确认收货状态[0->未确认；1->已确认]</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.confirmStatus" placeholder="确认收货状态[0->未确认；1->已确认]"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">删除状态【0->未删除；1->已删除】</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.deleteStatus" placeholder="删除状态【0->未删除；1->已删除】"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">下单时使用的积分</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.useIntegration" placeholder="下单时使用的积分"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">支付时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.paymentTime" placeholder="支付时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">发货时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.deliveryTime" placeholder="发货时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">确认收货时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.receiveTime" placeholder="确认收货时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">评价时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.commentTime" placeholder="评价时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">修改时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.modifyTime" placeholder="修改时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">订单备注</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="order.remark" placeholder="订单备注"/>
+			    </div>
+			</div>
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="../../js/modules/generator/order.js"></script>
+</body>
+</html>

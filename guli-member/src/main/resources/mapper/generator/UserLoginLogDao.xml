@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gulimember.dao.UserLoginLogDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="gulimember.entity.UserLoginLogEntity" id="userLoginLogMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="ip" column="ip"/>
+        <result property="city" column="city"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="gulimember.entity.UserLoginLogEntity">
+		select * from ums_user_login_log where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="gulimember.entity.UserLoginLogEntity">
+		select * from ums_user_login_log
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from ums_user_login_log 
+	</select>
+	 
+	<insert id="save" parameterType="gulimember.entity.UserLoginLogEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into ums_user_login_log
+		(
+			`user_id`, 
+			`create_time`, 
+			`ip`, 
+			`city`, 
+			`type`
+		)
+		values
+		(
+			#{userId}, 
+			#{createTime}, 
+			#{ip}, 
+			#{city}, 
+			#{type}
+		)
+	</insert>
+	 
+	<update id="updatee" parameterType="gulimember.entity.UserLoginLogEntity">
+		update ums_user_login_log 
+		<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="ip != null">`ip` = #{ip}, </if>
+			<if test="city != null">`city` = #{city}, </if>
+			<if test="type != null">`type` = #{type}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="deletee">
+		delete from ums_user_login_log where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from ums_user_login_log where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

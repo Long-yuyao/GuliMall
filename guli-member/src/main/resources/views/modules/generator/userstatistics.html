@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>统计信息表</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="../../css/bootstrap.min.css">
+<link rel="stylesheet" href="../../css/font-awesome.min.css">
+<link rel="stylesheet" href="../../plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="../../plugins/ztree/css/metroStyle/metroStyle.css">
+<link rel="stylesheet" href="../../css/main.css">
+<script src="../../libs/jquery.min.js"></script>
+<script src="../../plugins/layer/layer.js"></script>
+<script src="../../libs/bootstrap.min.js"></script>
+<script src="../../libs/vue.min.js"></script>
+<script src="../../plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="../../plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="../../plugins/ztree/jquery.ztree.all.min.js"></script>
+<script src="../../js/common.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<a v-if="hasPermission('userstatistics:save')" class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			<a v-if="hasPermission('userstatistics:update')" class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			<a v-if="hasPermission('userstatistics:delete')" class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">用户id</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="userStatistics.userId" placeholder="用户id"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">累计消费金额</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="userStatistics.consumeAmount" placeholder="累计消费金额"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">累计优惠金额</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="userStatistics.couponAmount" placeholder="累计优惠金额"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">订单数量</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="userStatistics.orderCount" placeholder="订单数量"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">优惠券数量</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="userStatistics.couponCount" placeholder="优惠券数量"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">评价数</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="userStatistics.commentCount" placeholder="评价数"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">退货数量</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="userStatistics.returnOrderCount" placeholder="退货数量"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">登录次数</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="userStatistics.loginCount" placeholder="登录次数"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">关注数量</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="userStatistics.attendCount" placeholder="关注数量"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">粉丝数量</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="userStatistics.fansCount" placeholder="粉丝数量"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">收藏的商品数量</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="userStatistics.collectProductCount" placeholder="收藏的商品数量"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">收藏的专题活动数量</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="userStatistics.collectSubjectCount" placeholder="收藏的专题活动数量"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">收藏的评论数量</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="userStatistics.collectCommentCount" placeholder="收藏的评论数量"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">邀请的朋友数量</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="userStatistics.inviteFriendCount" placeholder="邀请的朋友数量"/>
+			    </div>
+			</div>
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="../../js/modules/generator/userstatistics.js"></script>
+</body>
+</html>

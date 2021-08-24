@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yuyao.guliproduct.dao.SpuDescDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.yuyao.guliproduct.entity.SpuDescEntity" id="spuDescMap">
+        <result property="spuId" column="spu_id"/>
+        <result property="decript" column="decript"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.yuyao.guliproduct.entity.SpuDescEntity">
+		select * from pms_spu_desc where spu_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.yuyao.guliproduct.entity.SpuDescEntity">
+		select * from pms_spu_desc
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by spu_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from pms_spu_desc 
+	</select>
+	 
+	<insert id="save" parameterType="com.yuyao.guliproduct.entity.SpuDescEntity">
+		insert into pms_spu_desc
+		(
+			`spu_id`, 
+			`decript`
+		)
+		values
+		(
+			#{spuId}, 
+			#{decript}
+		)
+	</insert>
+	 
+	<update id="proupdate" parameterType="com.yuyao.guliproduct.entity.SpuDescEntity">
+		update pms_spu_desc 
+		<set>
+			<if test="decript != null">`decript` = #{decript}</if>
+		</set>
+		where spu_id = #{spuId}
+	</update>
+	
+	<delete id="prodelete">
+		delete from pms_spu_desc where spu_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from pms_spu_desc where spu_id in 
+		<foreach item="spuId" collection="array" open="(" separator="," close=")">
+			#{spuId}
+		</foreach>
+	</delete>
+
+</mapper>

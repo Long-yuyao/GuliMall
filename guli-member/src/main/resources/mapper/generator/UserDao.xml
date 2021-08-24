@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gulimember.dao.UserDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="gulimember.entity.UserEntity" id="userMap">
+        <result property="id" column="id"/>
+        <result property="levelId" column="level_id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="salt" column="salt"/>
+        <result property="nickname" column="nickname"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="header" column="header"/>
+        <result property="gender" column="gender"/>
+        <result property="birthday" column="birthday"/>
+        <result property="city" column="city"/>
+        <result property="job" column="job"/>
+        <result property="sign" column="sign"/>
+        <result property="sourceType" column="source_type"/>
+        <result property="integration" column="integration"/>
+        <result property="growth" column="growth"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="gulimember.entity.UserEntity">
+		select * from ums_user where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="gulimember.entity.UserEntity">
+		select * from ums_user
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from ums_user 
+	</select>
+	 
+	<insert id="save" parameterType="gulimember.entity.UserEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into ums_user
+		(
+			`level_id`, 
+			`username`, 
+			`password`, 
+			`salt`, 
+			`nickname`, 
+			`phone`, 
+			`email`, 
+			`header`, 
+			`gender`, 
+			`birthday`, 
+			`city`, 
+			`job`, 
+			`sign`, 
+			`source_type`, 
+			`integration`, 
+			`growth`, 
+			`status`, 
+			`create_time`
+		)
+		values
+		(
+			#{levelId}, 
+			#{username}, 
+			#{password}, 
+			#{salt}, 
+			#{nickname}, 
+			#{phone}, 
+			#{email}, 
+			#{header}, 
+			#{gender}, 
+			#{birthday}, 
+			#{city}, 
+			#{job}, 
+			#{sign}, 
+			#{sourceType}, 
+			#{integration}, 
+			#{growth}, 
+			#{status}, 
+			#{createTime}
+		)
+	</insert>
+	 
+	<update id="updatee" parameterType="gulimember.entity.UserEntity">
+		update ums_user 
+		<set>
+			<if test="levelId != null">`level_id` = #{levelId}, </if>
+			<if test="username != null">`username` = #{username}, </if>
+			<if test="password != null">`password` = #{password}, </if>
+			<if test="salt != null">`salt` = #{salt}, </if>
+			<if test="nickname != null">`nickname` = #{nickname}, </if>
+			<if test="phone != null">`phone` = #{phone}, </if>
+			<if test="email != null">`email` = #{email}, </if>
+			<if test="header != null">`header` = #{header}, </if>
+			<if test="gender != null">`gender` = #{gender}, </if>
+			<if test="birthday != null">`birthday` = #{birthday}, </if>
+			<if test="city != null">`city` = #{city}, </if>
+			<if test="job != null">`job` = #{job}, </if>
+			<if test="sign != null">`sign` = #{sign}, </if>
+			<if test="sourceType != null">`source_type` = #{sourceType}, </if>
+			<if test="integration != null">`integration` = #{integration}, </if>
+			<if test="growth != null">`growth` = #{growth}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="deletee">
+		delete from ums_user where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from ums_user where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="guliorder.dao.OrderSettingDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="guliorder.entity.OrderSettingEntity" id="orderSettingMap">
+        <result property="id" column="id"/>
+        <result property="flashOrderOvertime" column="flash_order_overtime"/>
+        <result property="normalOrderOvertime" column="normal_order_overtime"/>
+        <result property="confirmOvertime" column="confirm_overtime"/>
+        <result property="finishOvertime" column="finish_overtime"/>
+        <result property="commentOvertime" column="comment_overtime"/>
+        <result property="memberLevel" column="member_level"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="guliorder.entity.OrderSettingEntity">
+		select * from oms_order_setting where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="guliorder.entity.OrderSettingEntity">
+		select * from oms_order_setting
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from oms_order_setting 
+	</select>
+	 
+	<insert id="save" parameterType="guliorder.entity.OrderSettingEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into oms_order_setting
+		(
+			`flash_order_overtime`, 
+			`normal_order_overtime`, 
+			`confirm_overtime`, 
+			`finish_overtime`, 
+			`comment_overtime`, 
+			`member_level`
+		)
+		values
+		(
+			#{flashOrderOvertime}, 
+			#{normalOrderOvertime}, 
+			#{confirmOvertime}, 
+			#{finishOvertime}, 
+			#{commentOvertime}, 
+			#{memberLevel}
+		)
+	</insert>
+	 
+	<update id="updatee" parameterType="guliorder.entity.OrderSettingEntity">
+		update oms_order_setting 
+		<set>
+			<if test="flashOrderOvertime != null">`flash_order_overtime` = #{flashOrderOvertime}, </if>
+			<if test="normalOrderOvertime != null">`normal_order_overtime` = #{normalOrderOvertime}, </if>
+			<if test="confirmOvertime != null">`confirm_overtime` = #{confirmOvertime}, </if>
+			<if test="finishOvertime != null">`finish_overtime` = #{finishOvertime}, </if>
+			<if test="commentOvertime != null">`comment_overtime` = #{commentOvertime}, </if>
+			<if test="memberLevel != null">`member_level` = #{memberLevel}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="deletee">
+		delete from oms_order_setting where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from oms_order_setting where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yuyao.guliproduct.dao.SkuDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.yuyao.guliproduct.entity.SkuEntity" id="skuMap">
+        <result property="id" column="id"/>
+        <result property="spuId" column="spu_id"/>
+        <result property="name" column="name"/>
+        <result property="catagoryId" column="catagory_id"/>
+        <result property="brandId" column="brand_id"/>
+        <result property="defaultImage" column="default_image"/>
+        <result property="title" column="title"/>
+        <result property="subtitle" column="subtitle"/>
+        <result property="price" column="price"/>
+        <result property="weight" column="weight"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.yuyao.guliproduct.entity.SkuEntity">
+		select * from pms_sku where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.yuyao.guliproduct.entity.SkuEntity">
+		select * from pms_sku
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from pms_sku 
+	</select>
+	 
+	<insert id="save" parameterType="com.yuyao.guliproduct.entity.SkuEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into pms_sku
+		(
+			`spu_id`, 
+			`name`, 
+			`catagory_id`, 
+			`brand_id`, 
+			`default_image`, 
+			`title`, 
+			`subtitle`, 
+			`price`, 
+			`weight`
+		)
+		values
+		(
+			#{spuId}, 
+			#{name}, 
+			#{catagoryId}, 
+			#{brandId}, 
+			#{defaultImage}, 
+			#{title}, 
+			#{subtitle}, 
+			#{price}, 
+			#{weight}
+		)
+	</insert>
+	 
+	<update id="proupdate" parameterType="com.yuyao.guliproduct.entity.SkuEntity">
+		update pms_sku 
+		<set>
+			<if test="spuId != null">`spu_id` = #{spuId}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="catagoryId != null">`catagory_id` = #{catagoryId}, </if>
+			<if test="brandId != null">`brand_id` = #{brandId}, </if>
+			<if test="defaultImage != null">`default_image` = #{defaultImage}, </if>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="subtitle != null">`subtitle` = #{subtitle}, </if>
+			<if test="price != null">`price` = #{price}, </if>
+			<if test="weight != null">`weight` = #{weight}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="prodelete">
+		delete from pms_sku where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from pms_sku where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gulimember.dao.UserStatisticsDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="gulimember.entity.UserStatisticsEntity" id="userStatisticsMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="consumeAmount" column="consume_amount"/>
+        <result property="couponAmount" column="coupon_amount"/>
+        <result property="orderCount" column="order_count"/>
+        <result property="couponCount" column="coupon_count"/>
+        <result property="commentCount" column="comment_count"/>
+        <result property="returnOrderCount" column="return_order_count"/>
+        <result property="loginCount" column="login_count"/>
+        <result property="attendCount" column="attend_count"/>
+        <result property="fansCount" column="fans_count"/>
+        <result property="collectProductCount" column="collect_product_count"/>
+        <result property="collectSubjectCount" column="collect_subject_count"/>
+        <result property="collectCommentCount" column="collect_comment_count"/>
+        <result property="inviteFriendCount" column="invite_friend_count"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="gulimember.entity.UserStatisticsEntity">
+		select * from ums_user_statistics where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="gulimember.entity.UserStatisticsEntity">
+		select * from ums_user_statistics
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from ums_user_statistics 
+	</select>
+	 
+	<insert id="save" parameterType="gulimember.entity.UserStatisticsEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into ums_user_statistics
+		(
+			`user_id`, 
+			`consume_amount`, 
+			`coupon_amount`, 
+			`order_count`, 
+			`coupon_count`, 
+			`comment_count`, 
+			`return_order_count`, 
+			`login_count`, 
+			`attend_count`, 
+			`fans_count`, 
+			`collect_product_count`, 
+			`collect_subject_count`, 
+			`collect_comment_count`, 
+			`invite_friend_count`
+		)
+		values
+		(
+			#{userId}, 
+			#{consumeAmount}, 
+			#{couponAmount}, 
+			#{orderCount}, 
+			#{couponCount}, 
+			#{commentCount}, 
+			#{returnOrderCount}, 
+			#{loginCount}, 
+			#{attendCount}, 
+			#{fansCount}, 
+			#{collectProductCount}, 
+			#{collectSubjectCount}, 
+			#{collectCommentCount}, 
+			#{inviteFriendCount}
+		)
+	</insert>
+	 
+	<update id="updatee" parameterType="gulimember.entity.UserStatisticsEntity">
+		update ums_user_statistics 
+		<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="consumeAmount != null">`consume_amount` = #{consumeAmount}, </if>
+			<if test="couponAmount != null">`coupon_amount` = #{couponAmount}, </if>
+			<if test="orderCount != null">`order_count` = #{orderCount}, </if>
+			<if test="couponCount != null">`coupon_count` = #{couponCount}, </if>
+			<if test="commentCount != null">`comment_count` = #{commentCount}, </if>
+			<if test="returnOrderCount != null">`return_order_count` = #{returnOrderCount}, </if>
+			<if test="loginCount != null">`login_count` = #{loginCount}, </if>
+			<if test="attendCount != null">`attend_count` = #{attendCount}, </if>
+			<if test="fansCount != null">`fans_count` = #{fansCount}, </if>
+			<if test="collectProductCount != null">`collect_product_count` = #{collectProductCount}, </if>
+			<if test="collectSubjectCount != null">`collect_subject_count` = #{collectSubjectCount}, </if>
+			<if test="collectCommentCount != null">`collect_comment_count` = #{collectCommentCount}, </if>
+			<if test="inviteFriendCount != null">`invite_friend_count` = #{inviteFriendCount}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="deletee">
+		delete from ums_user_statistics where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from ums_user_statistics where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

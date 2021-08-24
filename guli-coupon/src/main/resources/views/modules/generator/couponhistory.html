@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>优惠券领取历史记录</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="../../css/bootstrap.min.css">
+<link rel="stylesheet" href="../../css/font-awesome.min.css">
+<link rel="stylesheet" href="../../plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="../../plugins/ztree/css/metroStyle/metroStyle.css">
+<link rel="stylesheet" href="../../css/main.css">
+<script src="../../libs/jquery.min.js"></script>
+<script src="../../plugins/layer/layer.js"></script>
+<script src="../../libs/bootstrap.min.js"></script>
+<script src="../../libs/vue.min.js"></script>
+<script src="../../plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="../../plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="../../plugins/ztree/jquery.ztree.all.min.js"></script>
+<script src="../../js/common.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<a v-if="hasPermission('couponhistory:save')" class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			<a v-if="hasPermission('couponhistory:update')" class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			<a v-if="hasPermission('couponhistory:delete')" class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">优惠券id</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="couponHistory.couponId" placeholder="优惠券id"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">会员id</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="couponHistory.memberId" placeholder="会员id"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">会员名字</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="couponHistory.memberNickName" placeholder="会员名字"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">获取方式[0->后台赠送；1->主动领取]</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="couponHistory.getType" placeholder="获取方式[0->后台赠送；1->主动领取]"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="couponHistory.createTime" placeholder="创建时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">使用状态[0->未使用；1->已使用；2->已过期]</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="couponHistory.useType" placeholder="使用状态[0->未使用；1->已使用；2->已过期]"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">使用时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="couponHistory.useTime" placeholder="使用时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">订单id</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="couponHistory.orderId" placeholder="订单id"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">订单号</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="couponHistory.orderSn" placeholder="订单号"/>
+			    </div>
+			</div>
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="../../js/modules/generator/couponhistory.js"></script>
+</body>
+</html>

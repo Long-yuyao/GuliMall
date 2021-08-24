@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gulicoupon.dao.HomeSubjectSpuDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="gulicoupon.entity.HomeSubjectSpuEntity" id="homeSubjectSpuMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="subjectId" column="subject_id"/>
+        <result property="spuId" column="spu_id"/>
+        <result property="sort" column="sort"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="gulicoupon.entity.HomeSubjectSpuEntity">
+		select * from sms_home_subject_spu where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="gulicoupon.entity.HomeSubjectSpuEntity">
+		select * from sms_home_subject_spu
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sms_home_subject_spu 
+	</select>
+	 
+	<insert id="save" parameterType="gulicoupon.entity.HomeSubjectSpuEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sms_home_subject_spu
+		(
+			`name`, 
+			`subject_id`, 
+			`spu_id`, 
+			`sort`
+		)
+		values
+		(
+			#{name}, 
+			#{subjectId}, 
+			#{spuId}, 
+			#{sort}
+		)
+	</insert>
+	 
+	<update id="coupdate" parameterType="gulicoupon.entity.HomeSubjectSpuEntity">
+		update sms_home_subject_spu 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="subjectId != null">`subject_id` = #{subjectId}, </if>
+			<if test="spuId != null">`spu_id` = #{spuId}, </if>
+			<if test="sort != null">`sort` = #{sort}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="codelete">
+		delete from sms_home_subject_spu where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sms_home_subject_spu where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

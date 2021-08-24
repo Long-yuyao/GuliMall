@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yuyao.guliproduct.dao.CommentDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.yuyao.guliproduct.entity.CommentEntity" id="commentMap">
+        <result property="id" column="id"/>
+        <result property="skuId" column="sku_id"/>
+        <result property="spuId" column="spu_id"/>
+        <result property="spuName" column="spu_name"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="star" column="star"/>
+        <result property="ip" column="ip"/>
+        <result property="createTime" column="create_time"/>
+        <result property="status" column="status"/>
+        <result property="spuAttributes" column="spu_attributes"/>
+        <result property="followCount" column="follow_count"/>
+        <result property="replyCount" column="reply_count"/>
+        <result property="resources" column="resources"/>
+        <result property="content" column="content"/>
+        <result property="icon" column="icon"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.yuyao.guliproduct.entity.CommentEntity">
+		select * from pms_comment where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.yuyao.guliproduct.entity.CommentEntity">
+		select * from pms_comment
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from pms_comment 
+	</select>
+	 
+	<insert id="save" parameterType="com.yuyao.guliproduct.entity.CommentEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into pms_comment
+		(
+			`sku_id`, 
+			`spu_id`, 
+			`spu_name`, 
+			`nick_name`, 
+			`star`, 
+			`ip`, 
+			`create_time`, 
+			`status`, 
+			`spu_attributes`, 
+			`follow_count`, 
+			`reply_count`, 
+			`resources`, 
+			`content`, 
+			`icon`, 
+			`type`
+		)
+		values
+		(
+			#{skuId}, 
+			#{spuId}, 
+			#{spuName}, 
+			#{nickName}, 
+			#{star}, 
+			#{ip}, 
+			#{createTime}, 
+			#{status}, 
+			#{spuAttributes}, 
+			#{followCount}, 
+			#{replyCount}, 
+			#{resources}, 
+			#{content}, 
+			#{icon}, 
+			#{type}
+		)
+	</insert>
+	 
+	<update id="proupdate" parameterType="com.yuyao.guliproduct.entity.CommentEntity">
+		update pms_comment 
+		<set>
+			<if test="skuId != null">`sku_id` = #{skuId}, </if>
+			<if test="spuId != null">`spu_id` = #{spuId}, </if>
+			<if test="spuName != null">`spu_name` = #{spuName}, </if>
+			<if test="nickName != null">`nick_name` = #{nickName}, </if>
+			<if test="star != null">`star` = #{star}, </if>
+			<if test="ip != null">`ip` = #{ip}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="spuAttributes != null">`spu_attributes` = #{spuAttributes}, </if>
+			<if test="followCount != null">`follow_count` = #{followCount}, </if>
+			<if test="replyCount != null">`reply_count` = #{replyCount}, </if>
+			<if test="resources != null">`resources` = #{resources}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="icon != null">`icon` = #{icon}, </if>
+			<if test="type != null">`type` = #{type}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="prodelete">
+		delete from pms_comment where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from pms_comment where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

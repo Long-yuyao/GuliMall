@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="guliorder.dao.RefundInfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="guliorder.entity.RefundInfoEntity" id="refundInfoMap">
+        <result property="id" column="id"/>
+        <result property="orderReturnId" column="order_return_id"/>
+        <result property="refund" column="refund"/>
+        <result property="refundSn" column="refund_sn"/>
+        <result property="refundStatus" column="refund_status"/>
+        <result property="refundChannel" column="refund_channel"/>
+        <result property="refundContent" column="refund_content"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="guliorder.entity.RefundInfoEntity">
+		select * from oms_refund_info where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="guliorder.entity.RefundInfoEntity">
+		select * from oms_refund_info
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from oms_refund_info 
+	</select>
+	 
+	<insert id="save" parameterType="guliorder.entity.RefundInfoEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into oms_refund_info
+		(
+			`order_return_id`, 
+			`refund`, 
+			`refund_sn`, 
+			`refund_status`, 
+			`refund_channel`, 
+			`refund_content`
+		)
+		values
+		(
+			#{orderReturnId}, 
+			#{refund}, 
+			#{refundSn}, 
+			#{refundStatus}, 
+			#{refundChannel}, 
+			#{refundContent}
+		)
+	</insert>
+	 
+	<update id="updatee" parameterType="guliorder.entity.RefundInfoEntity">
+		update oms_refund_info 
+		<set>
+			<if test="orderReturnId != null">`order_return_id` = #{orderReturnId}, </if>
+			<if test="refund != null">`refund` = #{refund}, </if>
+			<if test="refundSn != null">`refund_sn` = #{refundSn}, </if>
+			<if test="refundStatus != null">`refund_status` = #{refundStatus}, </if>
+			<if test="refundChannel != null">`refund_channel` = #{refundChannel}, </if>
+			<if test="refundContent != null">`refund_content` = #{refundContent}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="deletee">
+		delete from oms_refund_info where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from oms_refund_info where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

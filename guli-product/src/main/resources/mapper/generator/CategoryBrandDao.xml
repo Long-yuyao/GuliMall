@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yuyao.guliproduct.dao.CategoryBrandDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.yuyao.guliproduct.entity.CategoryBrandEntity" id="categoryBrandMap">
+        <result property="id" column="id"/>
+        <result property="brandId" column="brand_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="brandName" column="brand_name"/>
+        <result property="categoryName" column="category_name"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.yuyao.guliproduct.entity.CategoryBrandEntity">
+		select * from pms_category_brand where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.yuyao.guliproduct.entity.CategoryBrandEntity">
+		select * from pms_category_brand
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from pms_category_brand 
+	</select>
+	 
+	<insert id="save" parameterType="com.yuyao.guliproduct.entity.CategoryBrandEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into pms_category_brand
+		(
+			`brand_id`, 
+			`category_id`, 
+			`brand_name`, 
+			`category_name`
+		)
+		values
+		(
+			#{brandId}, 
+			#{categoryId}, 
+			#{brandName}, 
+			#{categoryName}
+		)
+	</insert>
+	 
+	<update id="proupdate" parameterType="com.yuyao.guliproduct.entity.CategoryBrandEntity">
+		update pms_category_brand 
+		<set>
+			<if test="brandId != null">`brand_id` = #{brandId}, </if>
+			<if test="categoryId != null">`category_id` = #{categoryId}, </if>
+			<if test="brandName != null">`brand_name` = #{brandName}, </if>
+			<if test="categoryName != null">`category_name` = #{categoryName}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="prodelete">
+		delete from pms_category_brand where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from pms_category_brand where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

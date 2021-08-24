@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yuyao.guliproduct.dao.SkuAttrValueDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.yuyao.guliproduct.entity.SkuAttrValueEntity" id="skuAttrValueMap">
+        <result property="id" column="id"/>
+        <result property="skuId" column="sku_id"/>
+        <result property="attrId" column="attr_id"/>
+        <result property="attrName" column="attr_name"/>
+        <result property="attrValue" column="attr_value"/>
+        <result property="sort" column="sort"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.yuyao.guliproduct.entity.SkuAttrValueEntity">
+		select * from pms_sku_attr_value where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.yuyao.guliproduct.entity.SkuAttrValueEntity">
+		select * from pms_sku_attr_value
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from pms_sku_attr_value 
+	</select>
+	 
+	<insert id="save" parameterType="com.yuyao.guliproduct.entity.SkuAttrValueEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into pms_sku_attr_value
+		(
+			`sku_id`, 
+			`attr_id`, 
+			`attr_name`, 
+			`attr_value`, 
+			`sort`
+		)
+		values
+		(
+			#{skuId}, 
+			#{attrId}, 
+			#{attrName}, 
+			#{attrValue}, 
+			#{sort}
+		)
+	</insert>
+	 
+	<update id="proupdate" parameterType="com.yuyao.guliproduct.entity.SkuAttrValueEntity">
+		update pms_sku_attr_value 
+		<set>
+			<if test="skuId != null">`sku_id` = #{skuId}, </if>
+			<if test="attrId != null">`attr_id` = #{attrId}, </if>
+			<if test="attrName != null">`attr_name` = #{attrName}, </if>
+			<if test="attrValue != null">`attr_value` = #{attrValue}, </if>
+			<if test="sort != null">`sort` = #{sort}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="prodelete">
+		delete from pms_sku_attr_value where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from pms_sku_attr_value where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

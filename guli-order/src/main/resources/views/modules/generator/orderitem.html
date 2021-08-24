@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>订单项信息</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="../../css/bootstrap.min.css">
+<link rel="stylesheet" href="../../css/font-awesome.min.css">
+<link rel="stylesheet" href="../../plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="../../plugins/ztree/css/metroStyle/metroStyle.css">
+<link rel="stylesheet" href="../../css/main.css">
+<script src="../../libs/jquery.min.js"></script>
+<script src="../../plugins/layer/layer.js"></script>
+<script src="../../libs/bootstrap.min.js"></script>
+<script src="../../libs/vue.min.js"></script>
+<script src="../../plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="../../plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="../../plugins/ztree/jquery.ztree.all.min.js"></script>
+<script src="../../js/common.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<a v-if="hasPermission('orderitem:save')" class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			<a v-if="hasPermission('orderitem:update')" class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			<a v-if="hasPermission('orderitem:delete')" class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">order_id</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.orderId" placeholder="order_id"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">order_sn</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.orderSn" placeholder="order_sn"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">spu_id</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.spuId" placeholder="spu_id"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">spu_name</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.spuName" placeholder="spu_name"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">spu_pic</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.spuPic" placeholder="spu_pic"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">品牌</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.spuBrand" placeholder="品牌"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">商品分类id</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.categoryId" placeholder="商品分类id"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">商品sku编号</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.skuId" placeholder="商品sku编号"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">商品sku名字</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.skuName" placeholder="商品sku名字"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">商品sku图片</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.skuPic" placeholder="商品sku图片"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">商品sku价格</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.skuPrice" placeholder="商品sku价格"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">商品购买的数量</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.skuQuantity" placeholder="商品购买的数量"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">商品销售属性组合（JSON）</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.skuAttrsVals" placeholder="商品销售属性组合（JSON）"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">商品促销分解金额</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.promotionAmount" placeholder="商品促销分解金额"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">优惠券优惠分解金额</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.couponAmount" placeholder="优惠券优惠分解金额"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">积分优惠分解金额</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.integrationAmount" placeholder="积分优惠分解金额"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">该商品经过优惠后的分解金额</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.realAmount" placeholder="该商品经过优惠后的分解金额"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">赠送积分</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.giftIntegration" placeholder="赠送积分"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">赠送成长值</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="orderItem.giftGrowth" placeholder="赠送成长值"/>
+			    </div>
+			</div>
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="../../js/modules/generator/orderitem.js"></script>
+</body>
+</html>

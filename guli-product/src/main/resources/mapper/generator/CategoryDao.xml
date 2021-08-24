@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yuyao.guliproduct.dao.CategoryDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.yuyao.guliproduct.entity.CategoryEntity" id="categoryMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="status" column="status"/>
+        <result property="sort" column="sort"/>
+        <result property="icon" column="icon"/>
+        <result property="unit" column="unit"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.yuyao.guliproduct.entity.CategoryEntity">
+		select * from pms_category where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.yuyao.guliproduct.entity.CategoryEntity">
+		select * from pms_category
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from pms_category 
+	</select>
+	 
+	<insert id="save" parameterType="com.yuyao.guliproduct.entity.CategoryEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into pms_category
+		(
+			`name`, 
+			`parent_id`, 
+			`status`, 
+			`sort`, 
+			`icon`, 
+			`unit`
+		)
+		values
+		(
+			#{name}, 
+			#{parentId}, 
+			#{status}, 
+			#{sort}, 
+			#{icon}, 
+			#{unit}
+		)
+	</insert>
+	 
+	<update id="proupdate" parameterType="com.yuyao.guliproduct.entity.CategoryEntity">
+		update pms_category 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="parentId != null">`parent_id` = #{parentId}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="sort != null">`sort` = #{sort}, </if>
+			<if test="icon != null">`icon` = #{icon}, </if>
+			<if test="unit != null">`unit` = #{unit}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="prodelete">
+		delete from pms_category where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from pms_category where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

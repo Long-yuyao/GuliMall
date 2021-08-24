@@ -9,10 +9,14 @@
 	<description>Mall</description>
 	<packaging>pom</packaging>
 	<modules>
-		<module>guli-coupon/guli-coupon</module>
-		<module>guli-member/guli-member</module>
+		<module>guli-coupon</module>
+		<module>guli-member</module>
 		<module>guli-order</module>
 		<module>guli-product</module>
 		<module>guli-storage</module>
+		<module>renren-fast</module>
+		<module>renren-generator</module>
+		<module>guli-common</module>
+		<module>guli-gateway</module>
 	</modules>
 </project>

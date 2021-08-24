@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gulicoupon.dao.SkuFullReductionDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="gulicoupon.entity.SkuFullReductionEntity" id="skuFullReductionMap">
+        <result property="id" column="id"/>
+        <result property="skuId" column="sku_id"/>
+        <result property="fullPrice" column="full_price"/>
+        <result property="reducePrice" column="reduce_price"/>
+        <result property="addOther" column="add_other"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="gulicoupon.entity.SkuFullReductionEntity">
+		select * from sms_sku_full_reduction where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="gulicoupon.entity.SkuFullReductionEntity">
+		select * from sms_sku_full_reduction
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sms_sku_full_reduction 
+	</select>
+	 
+	<insert id="save" parameterType="gulicoupon.entity.SkuFullReductionEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sms_sku_full_reduction
+		(
+			`sku_id`, 
+			`full_price`, 
+			`reduce_price`, 
+			`add_other`
+		)
+		values
+		(
+			#{skuId}, 
+			#{fullPrice}, 
+			#{reducePrice}, 
+			#{addOther}
+		)
+	</insert>
+	 
+	<update id="coupdate" parameterType="gulicoupon.entity.SkuFullReductionEntity">
+		update sms_sku_full_reduction 
+		<set>
+			<if test="skuId != null">`sku_id` = #{skuId}, </if>
+			<if test="fullPrice != null">`full_price` = #{fullPrice}, </if>
+			<if test="reducePrice != null">`reduce_price` = #{reducePrice}, </if>
+			<if test="addOther != null">`add_other` = #{addOther}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="codelete">
+		delete from sms_sku_full_reduction where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sms_sku_full_reduction where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

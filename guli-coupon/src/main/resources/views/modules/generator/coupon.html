@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>优惠券信息</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="../../css/bootstrap.min.css">
+<link rel="stylesheet" href="../../css/font-awesome.min.css">
+<link rel="stylesheet" href="../../plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="../../plugins/ztree/css/metroStyle/metroStyle.css">
+<link rel="stylesheet" href="../../css/main.css">
+<script src="../../libs/jquery.min.js"></script>
+<script src="../../plugins/layer/layer.js"></script>
+<script src="../../libs/bootstrap.min.js"></script>
+<script src="../../libs/vue.min.js"></script>
+<script src="../../plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="../../plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="../../plugins/ztree/jquery.ztree.all.min.js"></script>
+<script src="../../js/common.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<a v-if="hasPermission('coupon:save')" class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			<a v-if="hasPermission('coupon:update')" class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			<a v-if="hasPermission('coupon:delete')" class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">优惠卷类型[0->全场赠券；1->会员赠券；2->购物赠券；3->注册赠券]</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.couponType" placeholder="优惠卷类型[0->全场赠券；1->会员赠券；2->购物赠券；3->注册赠券]"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">优惠券图片</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.couponImg" placeholder="优惠券图片"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">优惠卷名字</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.couponName" placeholder="优惠卷名字"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">数量</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.num" placeholder="数量"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">金额</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.amount" placeholder="金额"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">每人限领张数</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.perLimit" placeholder="每人限领张数"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">使用门槛</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.minPoint" placeholder="使用门槛"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">开始时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.startTime" placeholder="开始时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">结束时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.endTime" placeholder="结束时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">使用类型[0->全场通用；1->指定分类；2->指定商品]</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.useType" placeholder="使用类型[0->全场通用；1->指定分类；2->指定商品]"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">备注</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.note" placeholder="备注"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">发行数量</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.publishCount" placeholder="发行数量"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">已使用数量</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.useCount" placeholder="已使用数量"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">领取数量</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.receiveCount" placeholder="领取数量"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">可以领取的开始日期</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.enableStartTime" placeholder="可以领取的开始日期"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">可以领取的结束日期</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.enableEndTime" placeholder="可以领取的结束日期"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">优惠码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.code" placeholder="优惠码"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">可以领取的会员等级[0->不限等级，其他-对应等级]</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.memberLevel" placeholder="可以领取的会员等级[0->不限等级，其他-对应等级]"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">发布状态[0-未发布，1-已发布]</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="coupon.publish" placeholder="发布状态[0-未发布，1-已发布]"/>
+			    </div>
+			</div>
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="../../js/modules/generator/coupon.js"></script>
+</body>
+</html>

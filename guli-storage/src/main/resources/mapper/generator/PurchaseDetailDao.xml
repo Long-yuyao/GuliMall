@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gulistorage.dao.PurchaseDetailDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="gulistorage.entity.PurchaseDetailEntity" id="purchaseDetailMap">
+        <result property="id" column="id"/>
+        <result property="purchaseId" column="purchase_id"/>
+        <result property="skuId" column="sku_id"/>
+        <result property="skuNum" column="sku_num"/>
+        <result property="skuPrice" column="sku_price"/>
+        <result property="wareId" column="ware_id"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="gulistorage.entity.PurchaseDetailEntity">
+		select * from wms_purchase_detail where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="gulistorage.entity.PurchaseDetailEntity">
+		select * from wms_purchase_detail
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from wms_purchase_detail 
+	</select>
+	 
+	<insert id="save" parameterType="gulistorage.entity.PurchaseDetailEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into wms_purchase_detail
+		(
+			`purchase_id`, 
+			`sku_id`, 
+			`sku_num`, 
+			`sku_price`, 
+			`ware_id`, 
+			`status`
+		)
+		values
+		(
+			#{purchaseId}, 
+			#{skuId}, 
+			#{skuNum}, 
+			#{skuPrice}, 
+			#{wareId}, 
+			#{status}
+		)
+	</insert>
+	 
+	<update id="updatee" parameterType="gulistorage.entity.PurchaseDetailEntity">
+		update wms_purchase_detail 
+		<set>
+			<if test="purchaseId != null">`purchase_id` = #{purchaseId}, </if>
+			<if test="skuId != null">`sku_id` = #{skuId}, </if>
+			<if test="skuNum != null">`sku_num` = #{skuNum}, </if>
+			<if test="skuPrice != null">`sku_price` = #{skuPrice}, </if>
+			<if test="wareId != null">`ware_id` = #{wareId}, </if>
+			<if test="status != null">`status` = #{status}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="deletee">
+		delete from wms_purchase_detail where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from wms_purchase_detail where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

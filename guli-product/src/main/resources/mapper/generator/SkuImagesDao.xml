@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yuyao.guliproduct.dao.SkuImagesDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.yuyao.guliproduct.entity.SkuImagesEntity" id="skuImagesMap">
+        <result property="id" column="id"/>
+        <result property="skuId" column="sku_id"/>
+        <result property="url" column="url"/>
+        <result property="sort" column="sort"/>
+        <result property="defaultStatus" column="default_status"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.yuyao.guliproduct.entity.SkuImagesEntity">
+		select * from pms_sku_images where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.yuyao.guliproduct.entity.SkuImagesEntity">
+		select * from pms_sku_images
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from pms_sku_images 
+	</select>
+	 
+	<insert id="save" parameterType="com.yuyao.guliproduct.entity.SkuImagesEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into pms_sku_images
+		(
+			`sku_id`, 
+			`url`, 
+			`sort`, 
+			`default_status`
+		)
+		values
+		(
+			#{skuId}, 
+			#{url}, 
+			#{sort}, 
+			#{defaultStatus}
+		)
+	</insert>
+	 
+	<update id="proupdate" parameterType="com.yuyao.guliproduct.entity.SkuImagesEntity">
+		update pms_sku_images 
+		<set>
+			<if test="skuId != null">`sku_id` = #{skuId}, </if>
+			<if test="url != null">`url` = #{url}, </if>
+			<if test="sort != null">`sort` = #{sort}, </if>
+			<if test="defaultStatus != null">`default_status` = #{defaultStatus}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="prodelete">
+		delete from pms_sku_images where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from pms_sku_images where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

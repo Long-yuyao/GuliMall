@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gulistorage.dao.WareDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="gulistorage.entity.WareEntity" id="wareMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="address" column="address"/>
+        <result property="areacode" column="areacode"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="gulistorage.entity.WareEntity">
+		select * from wms_ware where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="gulistorage.entity.WareEntity">
+		select * from wms_ware
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from wms_ware 
+	</select>
+	 
+	<insert id="save" parameterType="gulistorage.entity.WareEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into wms_ware
+		(
+			`name`, 
+			`address`, 
+			`areacode`
+		)
+		values
+		(
+			#{name}, 
+			#{address}, 
+			#{areacode}
+		)
+	</insert>
+	 
+	<update id="updatee" parameterType="gulistorage.entity.WareEntity">
+		update wms_ware 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="address != null">`address` = #{address}, </if>
+			<if test="areacode != null">`areacode` = #{areacode}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="deletee">
+		delete from wms_ware where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from wms_ware where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>
